@@ -6,26 +6,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
+/* ===== LIGHT THEME BASE ===== */
 body {
   margin: 0;
   font-family: system-ui, Arial, sans-serif;
-  background: #f5f5f5;
+  background: #f2f4f7;
+  color: #1f2937;
 }
 
 /* ===== HEADER ===== */
 header {
   text-align: center;
-  padding: 12px;
-  background: #1a73e8;
-  color: white;
+  padding: 14px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
   font-size: 1.2em;
+  font-weight: 600;
 }
 
-/* ===== MOBILE VISUAL TIMELINE ===== */
+/* ===== MOBILE TIMELINE ===== */
 .mobile-timeline {
   position: relative;
   padding: 20px 0;
-  max-width: 600px;
+  max-width: 640px;
   margin: auto;
 }
 
@@ -37,30 +40,30 @@ header {
   top: 0;
   bottom: 0;
   width: 4px;
-  background: #ccc;
+  background: #d1d5db;
   transform: translateX(-50%);
 }
 
-/* year label */
+/* year separator */
 .year {
   position: sticky;
   top: 0;
-  background: #f5f5f5;
+  background: #f2f4f7;
   text-align: center;
-  font-weight: bold;
-  padding: 8px 0;
+  font-weight: 700;
+  padding: 10px 0;
   z-index: 2;
+  color: #374151;
 }
 
 /* timeline item */
 .item {
   position: relative;
   width: 50%;
-  padding: 10px 15px;
+  padding: 10px 16px;
   box-sizing: border-box;
 }
 
-/* alternating sides */
 .item.left {
   left: 0;
   text-align: right;
@@ -68,26 +71,49 @@ header {
 
 .item.right {
   left: 50%;
+  text-align: left;
 }
 
 /* event card */
 .card {
-  background: white;
-  padding: 12px;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  background: #ffffff;
+  padding: 14px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   cursor: pointer;
+  transition: transform 0.15s;
 }
 
-/* dot */
+.card:active {
+  transform: scale(0.98);
+}
+
+/* alternating color accents */
+.card.color-0 {
+  border-left: 5px solid #2563eb;
+}
+
+.card.color-1 {
+  border-left: 5px solid #16a34a;
+}
+
+.card.color-2 {
+  border-left: 5px solid #f97316;
+}
+
+.card.color-3 {
+  border-left: 5px solid #9333ea;
+}
+
+/* timeline dots */
 .item::after {
   content: "";
   position: absolute;
-  top: 22px;
+  top: 26px;
   width: 14px;
   height: 14px;
-  background: #1a73e8;
   border-radius: 50%;
+  background: #9ca3af;
 }
 
 .item.left::after {
@@ -98,19 +124,25 @@ header {
   left: -7px;
 }
 
+/* dot color matches card */
+.item[data-color="0"]::after { background: #2563eb; }
+.item[data-color="1"]::after { background: #16a34a; }
+.item[data-color="2"]::after { background: #f97316; }
+.item[data-color="3"]::after { background: #9333ea; }
+
 /* description */
 .desc {
   display: none;
-  margin-top: 6px;
+  margin-top: 8px;
   font-size: 0.9em;
-  color: #333;
+  color: #374151;
 }
 
 .card.open .desc {
   display: block;
 }
 
-/* ===== DESKTOP FALLBACK ===== */
+/* ===== DESKTOP WIDTH ===== */
 @media (min-width: 900px) {
   .mobile-timeline {
     max-width: 900px;
@@ -140,7 +172,7 @@ const events = [
   {date:"1937-08-01", title:"Stvaranje Hrvatske komunističke partije", desc:"U okviru KPJ su nakon početka rješavanja nacionalnog pitanja bile osnovane neke nacionalne partije, među kojima je i Hrvatska komunistička partija"},  
   {date:"1921-01-25", title:"Stvaranje JNNO/ORJUNA", desc:"Stvaranje Jugoslavenske napredne nacionalističke omladine (JNNO), kasnije ORJUNA. Promicala ideologiju integralnog jugoslavenstva i našla ideološki uzor u talijanskom fašizmu"},  
   {date:"1927-01-01", title:"Seljačko-demokratska koalicija", desc:"Osnivanje SDK - ujedinjenje HSS i SDS. Radić i Pribićević protiv velikosrpske hegemonije"},  
-  {date:"1928-06-20", title:"Atentat Puniše Račića na Radića", desc:"Ubojstvo Pavla Radića i Đure Basaričeka; Ivan Pernar, Ivan Granđa i Stjepan Radić ranjeni"},  
+  {date:"1928-06-20", title:"Atentat Puniše Račića na Radića", desc:"Ubistvo Pavla Radića i Đure Basaričeka; Ivan Pernar, Ivan Granđa i Stjepan Radić ranjeni"},  
   {date:"1928-08-08", title:"Smrt Stjepana Radića", desc:"Stjepan Radić preminuo od posljedica ranjavanja, nasljeđuje ga Vladko Maček"},  
   {date:"1929-01-06", title:"Šestosiječanjska diktatura", desc:"Manifest suspendirao Vidovdanski ustav, raspustio Narodnu skupštinu. Neparlamentarna vlada na čelu s generalom Petrom Živkovićem"},  
   {date:"1929-10-03", title:"Zakon o nazivu i podjeli Kraljevine", desc:"Država mijenja ime u Kraljevina Jugoslavija; podjela na 33 oblasti ukinuta, uvedena 9 banovina"},  
@@ -154,8 +186,8 @@ const events = [
   {date:"1930-01-01", title:"Osnivanje UHRO", desc:"Ante Pavelić (poglavnik) osnovao UHRO"},  
   {date:"1934-10-09", title:"Ubojstvo kralja Aleksandra", desc:"Kralj Aleksandar Karađorđević ubijen u Marseillesu"},  
   {date:"1932-09-06", title:"Velebitski ustanak", desc:"Ustaše podižu ustanak protiv žandara u Lici (na Velebitu)"},  
-  {date:"1931-01-18", title:"Ubojstvo Milana Šufflaya", desc:"Albanologa Milana Šufflaya pokušali su ubiti žandari, pristaše režima"},  
-  {date:"1932-06-01", title:"Pokušaj ubojstva Mile Budaka", desc:"Nevinog književnika Milu Budaka (kasnije ideologa NDH i ratnog zločinca btw) pokušali ubiti žandari"}  
+  {date:"1931-01-18", title:"Ubojstvo Milana Šufflaya", desc:"Albanologa Milana Šufflaya nasmrt prebili pristaše režima"},  
+  {date:"1932-06-01", title:"Pokušaj ubojstva Mile Budaka", desc:"Nevinog književnika Milu Budaka pokušali ubiti žandari"}  
 ];  
 
 events.sort((a,b)=>new Date(a.date)-new Date(b.date));
@@ -163,6 +195,7 @@ events.sort((a,b)=>new Date(a.date)-new Date(b.date));
 const timeline = document.getElementById("timeline");
 let currentYear = null;
 let side = "left";
+let colorIndex = 0;
 
 events.forEach(ev => {
   const year = new Date(ev.date).getFullYear();
@@ -178,9 +211,10 @@ events.forEach(ev => {
 
   const item = document.createElement("div");
   item.className = `item ${side}`;
+  item.dataset.color = colorIndex;
 
   const card = document.createElement("div");
-  card.className = "card";
+  card.className = `card color-${colorIndex}`;
   card.innerHTML = `
     <strong>${ev.date}</strong><br>
     ${ev.title}
@@ -193,9 +227,9 @@ events.forEach(ev => {
   timeline.appendChild(item);
 
   side = side === "left" ? "right" : "left";
+  colorIndex = (colorIndex + 1) % 4; // ensure adjacent colors differ
 });
 </script>
 
 </body>
 </html>
-
