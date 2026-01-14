@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<title>Politička povijest Jugoslavije i Hrvatske (1918–1939)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  margin: 0;
+  padding: 10px;
+}
+h1 {
+  text-align: center;
+  font-size: 1.5em;
+}
+.timeline-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.event {
+  margin: 15px 0;
+  padding: 12px 15px;
+  border-left: 4px solid #333;
+  cursor: pointer;
+  transition: 0.2s;
+  border-radius: 4px;
+}
+.event:nth-child(even) {
+  background-color: #e8f0fe;
+  border-left-color: #1a73e8;
+}
+.event:nth-child(odd) {
+  background-color: #fff3e0;
+  border-left-color: #fb8c00;
+}
+.date {
+  font-weight: bold;
+  color: #222;
+  font-size: 0.9em;
+}
+.title {
+  font-size: 1em;
+  margin-top: 3px;
+}
+.desc {
+  margin-top: 6px;
+  display: none;
+  white-space: pre-line;
+  color: #333;
+}
+.event.open .desc {
+  display: block;
+}
+
+/* Visual timeline */
+.visual-timeline {
+  margin-top: 30px;
+  position: relative;
+  height: 70px;
+  background: #ddd;
+  border-radius: 30px;
+}
+.visual-timeline .marker {
+  position: absolute;
+  top: 0;
+  width: 16px;
+  height: 60px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.visual-timeline .marker:hover {
+  transform: scale(1.2);
+}
+
+/* Tooltip for mobile-friendly */
+.tooltip {
+  position: absolute;
+  max-width: 200px;
+  padding: 10px;
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 1000;
+  word-wrap: break-word;
+}
+
+/* Year labels */
+.year-label {
+  position: absolute;
+  bottom: -22px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #222;
+  transform: translateX(-50%);
+}
+
+/* Responsive tweaks */
+@media screen and (max-width: 600px) {
+  h1 { font-size: 1.2em; }
+  .event { padding: 10px; font-size: 0.9em; }
+  .visual-timeline { height: 60px; }
+  .visual-timeline .marker { width: 14px; height: 50px; }
+  .year-label { font-size: 12px; bottom: -18px; }
+}
+</style>
+</head>
+<body>
+
+<h1>Politička povijest (1918–1939)</h1>
+<div class="timeline-container" id="timeline"></div>
+<div class="visual-timeline" id="visualTimeline"></div>
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const events = [
+  {date:"1918-12-01", title:"Ujedinjenje države SHS i Srbije", desc:"Ujedinjenje države SHS i Srbije"},
+  {date:"1918-12-05", title:"Prosinačke žrtve", desc:"Opće nezadovoljstvo uzrokovano unitarnom politikom vlasti"},
+  {date:"1918-12-02", title:"Frankovci protiv ujedinjenja", desc:"Frankovci u svom proglasu istupaju protiv Države SHS - Hrvatska stranka prava (frankovci) postavljaju pitanje ustavnosti ujedinjenja države"},
+  {date:"1919-03-01", title:"Prvi sastanak Privremenog narodnog predstavništva", desc:"Manifestom kralja Aleksandra ono je unaprijed određeno kao zakonodavni čimbenik od 296 članova"},
+  {date:"1920-11-28", title:"Izbori za Ustavotvornu skupštinu", desc:"Sudjelovale su 22 stranke. Po broju glasova: Demokratska stranka -> Narodna stranka -> Komunistička partija Jugoslavije -> Hrvatska pučka seljačka stranka (kasnije HRSS)"},
+  {date:"1920-12-20", title:"Proglašena Obznana", desc:"Zabranjena politička djelatnost Komunističke partije Jugoslavije (KPJ), iz Ustavotvorne skupštine je izbačeno 58 komunista"},
+  {date:"1921-06-28", title:"Vidovdanski ustav", desc:"Kraljevstvo SHS uređeno je kao ustavna, parlamentarna monarhija sa strogim centralističkim uređenjem. Službeni jezik je srpsko-hrvatsko-slovenski, kralj je dobio vrlo široke ovlasti"},
+  {date:"1924-01-01", title:"Radić i Seljačka internacionala", desc:"Radić je učlanio HRSS u Seljačku internacionalu. Nakon neuspješnog traženja potpore u Beču i Londonu, pridružuje se Kominternu. Vlada zabranjuje djelovanje HRSS-a zbog Obznane, međutim, na izborima partija je dobila 67 mandata"},
+  {date:"1925-01-01", title:"Uhićenje Radića", desc:"Radić je uhićen, pušten nakon što priznaje Vidovdanski ustav i odustaje od borbe za republikanizam. HSS postaje dio nove vlade"},
+  {date:"1919-01-01", title:"Promjena vodstva HSP-a", desc:"Vladimir Prebeg postaje predsjednik HSP (Hrvatske stranke prava), a Ante Pavelić postaje tajnik"},
+  {date:"1937-08-01", title:"Stvaranje Hrvatske komunističke partije", desc:"U okviru KPJ su nakon početka rješavanja nacionalnog pitanja bile osnovane neke nacionalne partije, među kojima je i Hrvatska komunistička partija"},
+  {date:"1921-01-25", title:"Stvaranje JNNO/ORJUNA", desc:"Stvaranje Jugoslavenske napredne nacionalističke omladine (JNNO), kasnije ORJUNA. Promicala ideologiju integralnog jugoslavenstva i našla ideološki uzor u talijanskom fašizmu"},
+  {date:"1927-01-01", title:"Seljačko-demokratska koalicija", desc:"Osnivanje SDK - ujedinjenje HSS i SDS. Radić i Pribićević protiv velikosrpske hegemonije"},
+  {date:"1928-06-20", title:"Atentat Puniše Račića na Radića", desc:"Ubistvo Pavla Radića i Đure Basaričeka; Ivan Pernar, Ivan Granđa i Stjepan Radić ranjeni"},
+  {date:"1928-08-08", title:"Smrt Stjepana Radića", desc:"Stjepan Radić preminuo od posljedica ranjavanja, nasljeđuje ga Vladko Maček"},
+  {date:"1929-01-06", title:"Šestosiječanjska diktatura", desc:"Manifest suspendirao Vidovdanski ustav, raspustio Narodnu skupštinu. Neparlamentarna vlada na čelu s generalom Petrom Živkovićem"},
+  {date:"1929-10-03", title:"Zakon o nazivu i podjeli Kraljevine", desc:"Država mijenja ime u Kraljevina Jugoslavija; podjela na 33 oblasti ukinuta, uvedena 9 banovina"},
+  {date:"1931-09-03", title:"Oktroirani ustav", desc:"Kralj iznad zakona, vlada izravno odgovorna kralju. Bez kraljeva dopuštenja nijedna odluka u skupštini ne može biti usvojena"},
+  {date:"1929-01-01", title:"Raspuštanje HSS", desc:"HSS formalno raspušten, Maček kasnije uhićen"},
+  {date:"1929-01-06", title:"Zastave zabranjene", desc:"Više se ne smiju javno isticati hrvatske zastave"},
+  {date:"1939-08-26", title:"Sporazum Cvetković–Maček", desc:"Knez Pavle smijenio Stojadinovića i postavio Cvetkovića, Banovina Hrvatska formirana"},
+  {date:"1937-05-01", title:"Poraz Udružene opozicije", desc:"Udružena opozicija izgubila na izborima"},
+  {date:"1937-05-09", title:"Senjske žrtve", desc:"Mladi Gospićani ubijeni u Senju od strane jugoslavenskih žandara dok su nosili hrvatske zastave"},
+  {date:"1929-07-17", title:"Smrtna kazna Anti Paveliću", desc:"Beogradski sud dr. Ante Paveliću (zubar) donio smrtnu kaznu zbog povezivanja s protivnicima režima"},
+  {date:"1930-01-01", title:"Osnivanje UHRO", desc:"Ante Pavelić (poglavnik) osnovao UHRO"},
+  {date:"1934-10-09", title:"Ubojstvo kralja Aleksandra", desc:"Kralj Aleksandar Karađorđević ubijen u Marseillesu"},
+  {date:"1932-09-06", title:"Velebitski ustanak", desc:"Ustaše podižu ustanak protiv žandara u Lici (na Velebitu)"},
+  {date:"1931-01-18", title:"Ubojstvo Milana Šufflaya", desc:"Albanologa Milana Šufflaya nasmrt prebili pristaše režima"},
+  {date:"1932-06-01", title:"Pokušaj ubojstva Mile Budaka", desc:"Nevinog književnika Milu Budaka pokušali ubiti žandari"}
+];
+
+// Sort events
+events.sort((a,b)=> new Date(a.date) - new Date(b.date));
+
+// Main timeline
+const timeline = document.getElementById("timeline");
+events.forEach((ev, index) => {
+  const div = document.createElement("div");
+  div.className = "event";
+  div.innerHTML = `<div class="date">${ev.date}</div>
+                   <div class="title">${ev.title}</div>
+                   <div class="desc">${ev.desc}</div>`;
+  div.onclick = () => div.classList.toggle("open");
+  timeline.appendChild(div);
+});
+
+// Visual timeline
+const visualTimeline = document.getElementById("visualTimeline");
+const tooltip = document.getElementById("tooltip");
+const startDate = new Date(events[0].date);
+const endDate = new Date(events[events.length-1].date);
+const totalTime = endDate - startDate;
+const years = [...new Set(events.map(e=> new Date(e.date).getFullYear()))];
+
+events.forEach((ev, index) => {
+  const marker = document.createElement("div");
+  marker.className = "marker";
+  const eventDate = new Date(ev.date);
+  const position = ((eventDate - startDate) / totalTime) * 100;
+  marker.style.left = position + "%";
+  marker.style.backgroundColor = index % 2 === 0 ? "#1a73e8" : "#fb8c00";
+
+  // Mobile-friendly tooltip on tap
+  marker.addEventListener("click", (e) => {
+    const evDiv = document.querySelectorAll(".event")[index];
+    evDiv.scrollIntoView({behavior:"smooth", block:"center"});
+    evDiv.classList.add("open");
+
+    tooltip.style.left = e.pageX + "px";
+    tooltip.style.top = (e.pageY - 70) + "px";
+    tooltip.innerHTML = `<strong>${ev.title}</strong><br>${ev.desc}`;
+    tooltip.style.opacity = 1;
+    setTimeout(()=> tooltip.style.opacity = 0, 3000);
+  });
+  visualTimeline.appendChild(marker);
+});
+
+// Add year labels
+years.forEach(y => {
+  const yearDiv = document.createElement("div");
+  yearDiv.className = "year-label";
+  const yearDate = new Date(y + "-06-30");
+  const pos = ((yearDate - startDate) / totalTime) * 100;
+  yearDiv.style.left = pos + "%";
+  yearDiv.innerText = y;
+  visualTimeline.appendChild(yearDiv);
+});
+</script>
+</body>
+</html>
